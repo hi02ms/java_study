@@ -10,5 +10,6 @@ public class _02_DataTypes {
         System.out.println(true);
         System.out.println("true");
         System.out.println(false);
+        System.out.println("안녕하세요 저는 5월 24일 생 배민수라고 합니다");
     }
 }
