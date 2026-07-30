@@ -78,8 +78,8 @@ public class StudyTimeEvaluator {
 
     //정수 처리 메서드
     public static String formatHours(double hours) {
-        if (hours == (long) hours) {
-            return String.valueOf((long) hours);
+        if (hours == (int) hours) {
+            return String.valueOf((int) hours); // int: 32비트 long: 64비트 int는 -21억 ~ +21억까지 표현가능 하므로 공부시간을 표현하는데 충분함 고로 int 사용.
         }
 
         return String.valueOf(hours);
