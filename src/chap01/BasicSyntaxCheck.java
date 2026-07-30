@@ -1,4 +1,4 @@
-package day01;
+package chap01;
 
 public class BasicSyntaxCheck {
     public static void main(String[] args) {
