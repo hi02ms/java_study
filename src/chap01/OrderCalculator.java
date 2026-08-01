@@ -9,7 +9,7 @@ public class OrderCalculator {
 
         while (true) {
             System.out.print("상품 단가를 입력하세요: ");
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().strip();
 
             if (input.isBlank()) {
                 System.out.println("상품 단가를 입력해야 합니다.");
@@ -18,7 +18,7 @@ public class OrderCalculator {
 
             try {
                 // 앞뒤 공백을 제거한 문자열을 long으로 변환한다. (파싱)
-                long unitPrice = Long.parseLong(input.trim());
+                long unitPrice = Long.parseLong(input);
 
                 // 조건 검사
                 if (unitPrice < 1 || unitPrice > 100_000_000) { // 조건 불일치
@@ -37,7 +37,7 @@ public class OrderCalculator {
     public static int readQuantity(Scanner scanner) {
         while (true) {
             System.out.print("주문 수량을 입력하세요: ");
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().strip();
 
             if (input.isBlank()) {
                 System.out.println("주문 수량을 입력해야 합니다.");
@@ -45,7 +45,7 @@ public class OrderCalculator {
             }
 
             try {
-                int quantity = Integer.parseInt(input.trim());
+                int quantity = Integer.parseInt(input);
 
                 if (quantity < 1 || quantity > 99) {
                     System.out.println("주문 수량은 1개부터 99개까지 입력할 수 있습니다.");
@@ -59,23 +59,56 @@ public class OrderCalculator {
         }
     }
 
+    // 회원 여부 입력
+    public static boolean readMembership(Scanner scanner) {
+
+        while (true) {
+            System.out.print("회원입니까? (Y/N): ");
+            String membership = scanner.nextLine().strip();
+
+            if (membership.isBlank()) {
+                System.out.println("회원 여부를 입력해야 합니다.");
+                continue;
+            }
+
+            if (membership.equalsIgnoreCase("Y")) {
+                return true;
+            } else if (membership.equalsIgnoreCase("N")) {
+                return false;
+            }
+
+            System.out.println("회원 여부는 Y 또는 N으로 입력해야 합니다.");
+        }
+    }
+
     // main
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        long unitPrice = readUnitPrice(scanner);
-        int quantity = readQuantity(scanner);
+        // 입력 단계
+        long unitPrice = readUnitPrice(scanner);    // 상품 단가 확인
+        int quantity = readQuantity(scanner);       // 주문 수량 확인
+        boolean isMember = readMembership(scanner); // 회원 여부 확인
 
-        // Java의 산술 연산에서는 두 피연산자의 자료형이 다르면 더 큰 자료형에 맞춰서 계산.
-        long totalPrice = unitPrice * quantity;
-//        long totalPrice = Math.multiplyExact(unitPrice, quantity);
+        // 계산 단계
+        long totalPrice = unitPrice * quantity; // Java의 산술 연산에서는 두 피연산자의 자료형이 다르면 더 큰 자료형에 맞춰서 계산. long과 int를 곱하면 int가 long으로 자동 승격되어 결과도 long이 된다.
+        long memberDiscount = isMember ? totalPrice / 10 : 0; // 회원할인 = 상품금액 / 10
+        long discountedPrice = totalPrice - memberDiscount;
 
-        // 출력
+        // 출력 단계
         System.out.println();
         System.out.println("===== 계산 결과 =====");
         System.out.printf("상품 단가: %,d원%n", unitPrice);
         System.out.printf("주문 수량: %d개%n", quantity);
         System.out.printf("상품 금액: %,d원%n", totalPrice);
+        if (isMember) {
+            System.out.printf("회원 여부: 회원%n");
+            System.out.printf("회원 할인: -%,d원%n", memberDiscount);
+        } else {
+            System.out.printf("회원 여부: 비회원%n");
+            System.out.printf("회원 할인: %d원%n", memberDiscount);
+        }
+        System.out.printf("할인 후 금액: %,d원%n", discountedPrice);
 
         scanner.close();
     }
