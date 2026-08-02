@@ -81,14 +81,14 @@ public class OrderCalculator {
         }
     }
 
-    // 쿠폰 정책
+    // 쿠폰 코드 입력
     public static String readCouponCode(Scanner scanner) {
 
         System.out.print("쿠폰 코드를 입력하세요 (없으면 Enter): ");
         String couponCode = scanner.nextLine().strip();
 
         // 빈입력 : 쿠폰 사용 안함
-        if (couponCode.isBlank()){
+        if (couponCode.isBlank()) {
             return "";
         }
         // 유효한 쿠폰
@@ -101,6 +101,15 @@ public class OrderCalculator {
         }
     }
 
+    // 모든 할인 후 금액을 기준으로 배송비 계산
+    public static long calculateShippingFee(long priceAfterDiscounts) {
+        if (priceAfterDiscounts >= 50_000L) {
+            return 0L;
+        } else {
+            return 3_000L;
+        }
+    }
+
     // main
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -110,8 +119,7 @@ public class OrderCalculator {
         int quantity = readQuantity(scanner);       // 주문 수량 확인
         boolean isMember = readMembership(scanner); // 회원 여부 확인
         String couponCode = readCouponCode(scanner); // 쿠폰 여부 확인
-        boolean hasCoupon = couponCode.equalsIgnoreCase("SAVE3000"); // 이부분 true 인지 확인..
-
+        boolean hasCoupon = couponCode.equals("SAVE3000");
 
         // 계산 단계
         long totalPrice = unitPrice * quantity; // Java의 산술 연산에서는 두 피연산자의 자료형이 다르면 더 큰 자료형에 맞춰서 계산. long과 int를 곱하면 int가 long으로 자동 승격되어 결과도 long이 된다.
@@ -120,7 +128,8 @@ public class OrderCalculator {
         boolean isCouponApplicable = hasCoupon && priceAfterMemberDiscount >= 30_000L;
         long couponDiscount = isCouponApplicable ? 3_000L : 0L;
         long priceAfterDiscounts = priceAfterMemberDiscount - couponDiscount;
-
+        long shippingFee = calculateShippingFee(priceAfterDiscounts);
+        long finalPrice = priceAfterDiscounts + shippingFee;
 
         // 출력 단계
         System.out.println();
@@ -147,8 +156,14 @@ public class OrderCalculator {
             System.out.println("쿠폰: 사용 안함");
             System.out.printf("쿠폰 할인: %,d원%n", couponDiscount);
         }
-
         System.out.printf("모든 할인 후 금액: %,d원%n", priceAfterDiscounts);
+        if (shippingFee == 0) {
+            System.out.println("배송비: 무료");
+        } else {
+            System.out.printf("배송비: %,d원%n", shippingFee);
+        }
+        System.out.printf("최종 결제 금액: %,d원%n", finalPrice);
+
         scanner.close();
     }
 }
